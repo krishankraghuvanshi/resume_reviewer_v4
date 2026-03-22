@@ -1,0 +1,64 @@
+{
+  "name": "resume-reviewer-builder",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@mui/icons-material": "^5.14.19",
+    "@mui/material": "^5.14.20",
+    "@mui/system": "^5.14.20",
+    "axios": "^1.7.9",
+    "cors": "^2.8.6",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "framer-motion": "^10.16.16",
+    "multer": "^1.4.5-lts.1",
+    "pg": "^8.18.0",
+    "pino": "^9.3.2",
+    "pino-http": "^10.3.0",
+    "pino-pretty": "^11.2.2",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-scripts": "5.0.1",
+    "uuid": "^10.0.0"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "client": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "server": "node server.js",
+    "server:dev": "node --watch server.js",
+    "server:mock": "node server-mock.js",
+    "dev": "concurrently \"npm run server:dev\" \"npm run client\"",
+    "dev:mock": "concurrently \"npm run server:mock\" \"npm run client\"",
+    "setup-db": "node init-db.js"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "env": {
+    "DATABASE_URL": "postgresql://postgres@localhost:5432/resumereviewer",
+    "TIKA_URL": "http://localhost:9998"
+  }
+}
