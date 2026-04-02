@@ -1,4 +1,4 @@
-# Resume Reviewer
+# Resume Reviewer v4
 
 A full-stack application for reviewing resumes. It consists of a React frontend and a Node.js/Express backend using PostgreSQL, OpenAI API, and Apache Tika for document parsing.
 
@@ -14,8 +14,8 @@ Before you begin, ensure you have the following installed:
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/yourusername/resume_reviewer_v3.git
-cd resume_reviewer_v3
+git clone https://github.com/krishankraghuvanshi/resume_reviewer_v4.git
+cd resume_reviewer_v4
 ```
 
 ### 2. Install Dependencies
