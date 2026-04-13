@@ -18,13 +18,23 @@ import {
   TableCell,
   TableContainer,
   TableRow,
-  TextField
+  TextField,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  Snackbar
 } from '@mui/material';
 import {
   ArrowBack as ArrowBackIcon,
   CloudUpload as CloudUploadIcon,
-  Download as DownloadIcon,
-  AutoFixHigh as AutoFixHighIcon
+  AutoFixHigh as AutoFixHighIcon,
+  ExpandMore as ExpandMoreIcon,
+  ContentCopy as ContentCopyIcon,
+  Lightbulb as LightbulbIcon,
+  Build as BuildIcon,
+  WorkOutline as WorkIcon,
+  EventNote as ProjectsIcon,
+  Code as CodeIcon
 } from '@mui/icons-material';
 import { motion } from 'framer-motion';
 import { resumeAPI } from '../services/api';
@@ -36,7 +46,9 @@ const ResumeUploader = ({ onBack }) => {
   const [error, setError] = useState('');
   const [result, setResult] = useState(null);
   const [enhancing, setEnhancing] = useState(false);
-  const [downloading, setDownloading] = useState(false);
+  const [latexCode, setLatexCode] = useState('');
+  const [generatingLatex, setGeneratingLatex] = useState(false);
+  const [copySuccess, setCopySuccess] = useState('');
 
   const handleFileChange = (event) => {
     const selectedFile = event.target.files?.[0];
@@ -67,24 +79,35 @@ const ResumeUploader = ({ onBack }) => {
     }
   };
 
-  const handleDownloadLatex = async () => {
-    if (!result?.parsed_resume) return;
+  const handleGenerateLatex = async (resumeData = result?.parsed_resume) => {
+    if (!resumeData) return;
     
-    setDownloading(true);
+    setGeneratingLatex(true);
+    setLatexCode('');
+    setError('');
+    
     try {
-      const blob = await resumeAPI.downloadLatex(result.parsed_resume);
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', `resume_${Date.now()}.tex`);
-      document.body.appendChild(link);
-      link.click();
-      link.parentNode.removeChild(link);
+      const data = await resumeAPI.generateLatex(resumeData);
+      if (data && data.latex_code) {
+        setLatexCode(data.latex_code);
+      } else {
+        throw new Error('LaTeX code not found in response');
+      }
     } catch (err) {
-      setError(err.message || 'Failed to download LaTeX');
+      setError(err.message || 'Failed to generate LaTeX');
     } finally {
-      setDownloading(false);
+      setGeneratingLatex(false);
     }
+  };
+
+  const handleCopyLatex = () => {
+    navigator.clipboard.writeText(latexCode).then(() => {
+      setCopySuccess('Copied to clipboard for Overleaf!');
+    });
+  };
+
+  const handleCloseSnackbar = () => {
+    setCopySuccess('');
   };
 
   const handleEnhanceResume = async () => {
@@ -96,6 +119,7 @@ const ResumeUploader = ({ onBack }) => {
       setResult(prev => ({
         ...prev,
         enhanced_resume: data.enhanced_resume,
+        enhanced_ats_score: data.enhanced_ats_score,
         llm_usage: data.llm_usage
       }));
     } catch (err) {
@@ -339,60 +363,76 @@ const ResumeUploader = ({ onBack }) => {
                 {result.suggestions && (
                   <Card sx={{ mb: 4, backgroundColor: '#fff3cd' }}>
                     <CardContent sx={{ p: 4 }}>
-                      <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 3 }}>
-                        💡 Improvement Suggestions
+                      <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 3, display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <LightbulbIcon color="warning" /> Improvement Suggestions
                       </Typography>
 
                       {result.suggestions.general && result.suggestions.general.length > 0 && (
-                        <Box sx={{ mb: 3 }}>
-                          <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2 }}>
-                            General
-                          </Typography>
-                          {result.suggestions.general.map((suggestion, idx) => (
-                            <Typography key={idx} variant="body2" sx={{ mb: 1 }}>
-                              • {suggestion}
+                        <Accordion defaultExpanded sx={{ mb: 1 }}>
+                          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                            <Typography sx={{ fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: 1 }}>
+                              <LightbulbIcon color="warning" fontSize="small" /> General Feedback
                             </Typography>
-                          ))}
-                        </Box>
+                          </AccordionSummary>
+                          <AccordionDetails>
+                            {result.suggestions.general.map((suggestion, idx) => (
+                              <Typography key={idx} variant="body2" sx={{ mb: 1.5, pl: 3, position: 'relative' }}>
+                                <span style={{ position: 'absolute', left: 0, top: 0 }}>•</span> {suggestion}
+                              </Typography>
+                            ))}
+                          </AccordionDetails>
+                        </Accordion>
                       )}
 
                       {result.suggestions.skills && result.suggestions.skills.length > 0 && (
-                        <Box sx={{ mb: 3 }}>
-                          <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2 }}>
-                            Skills
-                          </Typography>
-                          {result.suggestions.skills.map((suggestion, idx) => (
-                            <Typography key={idx} variant="body2" sx={{ mb: 1 }}>
-                              • {suggestion}
+                        <Accordion sx={{ mb: 1 }}>
+                          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                            <Typography sx={{ fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: 1 }}>
+                              <BuildIcon color="primary" fontSize="small" /> Skills Improvements
                             </Typography>
-                          ))}
-                        </Box>
+                          </AccordionSummary>
+                          <AccordionDetails>
+                            {result.suggestions.skills.map((suggestion, idx) => (
+                              <Typography key={idx} variant="body2" sx={{ mb: 1.5, pl: 3, position: 'relative' }}>
+                                <span style={{ position: 'absolute', left: 0, top: 0 }}>•</span> {suggestion}
+                              </Typography>
+                            ))}
+                          </AccordionDetails>
+                        </Accordion>
                       )}
 
                       {result.suggestions.experience && result.suggestions.experience.length > 0 && (
-                        <Box sx={{ mb: 3 }}>
-                          <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2 }}>
-                            Experience
-                          </Typography>
-                          {result.suggestions.experience.map((suggestion, idx) => (
-                            <Typography key={idx} variant="body2" sx={{ mb: 1 }}>
-                              • {suggestion}
+                        <Accordion sx={{ mb: 1 }}>
+                          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                            <Typography sx={{ fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: 1 }}>
+                              <WorkIcon color="secondary" fontSize="small" /> Experience Enhancements
                             </Typography>
-                          ))}
-                        </Box>
+                          </AccordionSummary>
+                          <AccordionDetails>
+                            {result.suggestions.experience.map((suggestion, idx) => (
+                              <Typography key={idx} variant="body2" sx={{ mb: 1.5, pl: 3, position: 'relative' }}>
+                                <span style={{ position: 'absolute', left: 0, top: 0 }}>•</span> {suggestion}
+                              </Typography>
+                            ))}
+                          </AccordionDetails>
+                        </Accordion>
                       )}
 
                       {result.suggestions.projects && result.suggestions.projects.length > 0 && (
-                        <Box sx={{ mb: 3 }}>
-                          <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2 }}>
-                            Projects
-                          </Typography>
-                          {result.suggestions.projects.map((suggestion, idx) => (
-                            <Typography key={idx} variant="body2" sx={{ mb: 1 }}>
-                              • {suggestion}
+                        <Accordion sx={{ mb: 1 }}>
+                          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                            <Typography sx={{ fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: 1 }}>
+                              <ProjectsIcon color="info" fontSize="small" /> Project Highlights
                             </Typography>
-                          ))}
-                        </Box>
+                          </AccordionSummary>
+                          <AccordionDetails>
+                            {result.suggestions.projects.map((suggestion, idx) => (
+                              <Typography key={idx} variant="body2" sx={{ mb: 1.5, pl: 3, position: 'relative' }}>
+                                <span style={{ position: 'absolute', left: 0, top: 0 }}>•</span> {suggestion}
+                              </Typography>
+                            ))}
+                          </AccordionDetails>
+                        </Accordion>
                       )}
                     </CardContent>
                   </Card>
@@ -405,24 +445,48 @@ const ResumeUploader = ({ onBack }) => {
                       <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 3 }}>
                         ✨ AI-Enhanced Resume
                       </Typography>
-                      <Typography variant="body2" component="pre" sx={{ whiteSpace: 'pre-wrap', fontFamily: 'monospace', fontSize: '0.85rem' }}>
-                        {JSON.stringify(result.enhanced_resume, null, 2).substring(0, 500)}...
+                      {result.enhanced_ats_score && (
+                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 3, gap: 2 }}>
+                          <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                            Enhanced ATS Score:
+                          </Typography>
+                          <Chip 
+                            label={`${result.enhanced_ats_score.total_score || 0} / 100`} 
+                            color="success" 
+                            variant="filled" 
+                            sx={{ fontWeight: 'bold', fontSize: '1rem' }} 
+                          />
+                        </Box>
+                      )}
+                      <Typography variant="body2" component="pre" sx={{ whiteSpace: 'pre-wrap', fontFamily: 'monospace', fontSize: '0.85rem', maxHeight: 300, overflow: 'auto', backgroundColor: '#fff', p: 2, borderRadius: 1 }}>
+                        {JSON.stringify(result.enhanced_resume, null, 2)}
                       </Typography>
                     </CardContent>
                   </Card>
                 )}
 
                 {/* Action Buttons */}
-                <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+                <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', mb: 3 }}>
                   <Button
                     variant="contained"
-                    startIcon={<DownloadIcon />}
-                    onClick={handleDownloadLatex}
-                    disabled={downloading}
+                    startIcon={<CodeIcon />}
+                    onClick={() => handleGenerateLatex(result.parsed_resume)}
+                    disabled={generatingLatex}
                     sx={{ backgroundColor: 'black', color: 'white' }}
                   >
-                    {downloading ? 'Downloading...' : 'Download as LaTeX'}
+                    Generate LaTeX (Original)
                   </Button>
+                  {result.enhanced_resume && (
+                    <Button
+                      variant="contained"
+                      startIcon={<CodeIcon />}
+                      onClick={() => handleGenerateLatex(result.enhanced_resume)}
+                      disabled={generatingLatex}
+                      sx={{ backgroundColor: '#1976d2', color: 'white' }}
+                    >
+                      Generate LaTeX (Enhanced)
+                    </Button>
+                  )}
                   <Button
                     variant="outlined"
                     startIcon={<AutoFixHighIcon />}
@@ -437,17 +501,60 @@ const ResumeUploader = ({ onBack }) => {
                     onClick={() => {
                       setResult(null);
                       setFile(null);
+                      setLatexCode('');
                     }}
                     sx={{ borderColor: 'black', color: 'black' }}
                   >
                     Upload Another
                   </Button>
                 </Box>
+
+                {/* LaTeX Viewer */}
+                {latexCode && (
+                  <Card sx={{ mb: 4, backgroundColor: '#f5f5f5', border: '1px solid #ddd' }}>
+                    <CardContent sx={{ p: 4 }}>
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                        <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+                          LaTeX Source Code
+                        </Typography>
+                        <Button
+                          variant="contained"
+                          startIcon={<ContentCopyIcon />}
+                          onClick={handleCopyLatex}
+                          sx={{ backgroundColor: '#2e7d32', color: 'white', '&:hover': { backgroundColor: '#1b5e20' } }}
+                        >
+                          Copy for Overleaf
+                        </Button>
+                      </Box>
+                      <TextField
+                        fullWidth
+                        multiline
+                        minRows={10}
+                        maxRows={20}
+                        value={latexCode}
+                        InputProps={{
+                          readOnly: true,
+                          sx: { fontFamily: 'monospace', fontSize: '0.85rem' }
+                        }}
+                        variant="outlined"
+                        sx={{ backgroundColor: 'white' }}
+                      />
+                    </CardContent>
+                  </Card>
+                )}
               </Box>
             </motion.div>
           )}
         </motion.div>
       </Box>
+
+      <Snackbar
+        open={!!copySuccess}
+        autoHideDuration={3000}
+        onClose={handleCloseSnackbar}
+        message={copySuccess}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      />
     </>
   );
 };

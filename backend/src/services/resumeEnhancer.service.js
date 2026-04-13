@@ -5,31 +5,28 @@ const { createJsonCompletion } = require("./openai.service");
  */
 function buildEnhancementSystemPrompt() {
   return `You are an expert resume writer and career coach. Your task is to enhance resume content by:
-1. Expanding bullet points with quantifiable achievements and impact metrics
-2. Adding relevant technical details and technologies
-3. Improving action verbs and professional language
-4. Maintaining truthfulness - only add realistic, industry-standard details
-5. Keeping the professional tone and structure
+1. Improving action verbs and professional language of existing bullet points.
+2. Maintaining strict truthfulness - DO NOT make up false quantifiable metrics, company names, or achievements that you cannot infer.
+3. RETAINING ALL ORIGINAL INFORMATION. You are NOT allowed to delete any existing bullet points, skills, experiences, projects, or education. You must keep every detail from the original resume, only refining how it's written.
+4. Expanding on descriptions only if it organically adds professional value without fabricating unrealistic tailored achievements.
 
-IMPORTANT: Return a complete, enhanced resume in the same JSON structure. Do NOT make up false information.`;
+IMPORTANT: Return a complete, enhanced resume in the same JSON structure. Do NOT hallucinate false qualifications or delete existing context.`;
 }
 
 /**
  * Build user prompt for enhancing specific resume data
  */
 function buildEnhancementUserPrompt(parsedResume) {
-  return `Please enhance this resume by adding more professional details, metrics, and accomplishments. 
-Expand bullet points to be more specific and impactful. Add realistic quantifiable achievements where appropriate.
+  return `Please polish and enhance the wording of this resume while STRICTLY preserving all existing details and accomplishments. Do not delete or shorten any information.
 
 Current Resume Data:
 ${JSON.stringify(parsedResume, null, 2)}
 
 Return an enhanced version in the EXACT SAME JSON structure with:
-- More detailed experience bullets (3-5 bullets per role with quantifiable metrics)
-- Quantifiable metrics and achievements where realistic (e.g., "Improved performance by 40%", "Managed team of 5 developers")
-- Expanded project descriptions with impact and tech details
-- CATEGORIZED skills (Languages, Frameworks, Tools, Databases, etc.)
-- More comprehensive education details (GPA if strong, relevant coursework)
+- Refined and more impactful experience bullets (DO NOT delete any existing bullets or experiences, just rephrase them beautifully)
+- Improved phrasing using strong action verbs
+- Accurate categorization of skills into categories (DO NOT drop any existing skills)
+- Retaining all original context, including projects, education, and dates. Do not shorten or over-tailor the resume.
 
 Return ONLY valid JSON in this exact structure:
 {

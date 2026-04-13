@@ -322,11 +322,15 @@ async function enhanceResume(req, res, next) {
     // Enhance resume using AI
     const result = await enhanceResumeWithAI(parsed_resume, { resumeId, log });
     
+    const enhancedText = JSON.stringify(result.enhanced_resume);
+    const atsResult = scoreAts(result.enhanced_resume, enhancedText);
+    
     log.info({ usage: result.llm_usage }, 'Resume enhancement completed');
     
     return res.json({
       success: true,
       enhanced_resume: result.enhanced_resume,
+      enhanced_ats_score: atsResult,
       llm_usage: result.llm_usage
     });
   } catch (err) {
