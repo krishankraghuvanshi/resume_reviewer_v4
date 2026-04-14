@@ -123,7 +123,7 @@ if (fs.existsSync(resumeStoragePath)) {
 }
 
 // Serve frontend build in production (single-service deployment)
-const buildPath = path.join(process.cwd(), "..", "frontend", "build");
+const buildPath = path.join(process.cwd(), "frontend", "build");
 if (fs.existsSync(buildPath)) {
   app.use(express.static(buildPath));
 

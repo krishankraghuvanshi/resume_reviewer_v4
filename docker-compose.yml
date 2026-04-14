@@ -14,29 +14,17 @@ services:
     networks:
       - resume-network
 
-  backend:
-    build: ./backend
-    container_name: resume_reviewer_backend
+  app:
+    build: .
+    container_name: resume_reviewer_app
     restart: always
     ports:
       - "3000:3000"
+    env_file:
+      - .env
     environment:
-      - NODE_ENV=production
-      - TIKA_URL=http://tika_server:9998
+      - TIKA_URL=http://tika_server:9998  # Override for Docker network
     depends_on:
       - tika
-    networks:
-      - resume-network
-
-  frontend:
-    build: ./frontend
-    container_name: resume_reviewer_frontend
-    restart: always
-    ports:
-      - "3001:3001"
-    environment:
-      - REACT_APP_API_URL=http://localhost:3000
-    depends_on:
-      - backend
     networks:
       - resume-network
