@@ -1,0 +1,42 @@
+version: '3.8'
+
+networks:
+  resume-network:
+    driver: bridge
+
+services:
+  tika:
+    image: apache/tika:latest
+    container_name: tika_server
+    restart: always
+    ports:
+      - "9998:9998"
+    networks:
+      - resume-network
+
+  backend:
+    build: ./backend
+    container_name: resume_reviewer_backend
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - TIKA_URL=http://tika_server:9998
+    depends_on:
+      - tika
+    networks:
+      - resume-network
+
+  frontend:
+    build: ./frontend
+    container_name: resume_reviewer_frontend
+    restart: always
+    ports:
+      - "3001:3001"
+    environment:
+      - REACT_APP_API_URL=http://localhost:3000
+    depends_on:
+      - backend
+    networks:
+      - resume-network
