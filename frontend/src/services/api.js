@@ -4,7 +4,7 @@ const API_BASE_URL = process.env.REACT_APP_API_URL || '';
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 30000,
+  timeout: 120000, // 2 minutes
 });
 
 // Resume API calls

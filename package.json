@@ -19,7 +19,7 @@
     "dev": "nodemon server.js",
     "setup-db": "node init-db.js",
     "build-frontend": "cd frontend && npm run build",
-    "build": "npm run build-frontend && cp -r frontend/build ."
+    "build": "npm run build-frontend"
   },
   "devDependencies": {
     "nodemon": "^3.1.14"
