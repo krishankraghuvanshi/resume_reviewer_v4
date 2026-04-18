@@ -4,32 +4,6 @@ import { motion } from 'framer-motion';
 import { Add as AddIcon, CloudUpload as UploadIcon } from '@mui/icons-material';
 
 const HeroSection = ({ onCreateResume, onUploadResume }) => {
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        duration: 0.8,
-        staggerChildren: 0.2
-      }
-    }
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 30 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.6 }
-    }
-  };
-
-  const buttonVariants = {
-    hover: {
-      scale: 1.05,
-      transition: { duration: 0.2 }
-    }
-  };
 
   return (
     <Box
@@ -140,9 +114,9 @@ const HeroSection = ({ onCreateResume, onUploadResume }) => {
       />
 
       <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.8 }}
         style={{
           textAlign: 'center',
           zIndex: 2,
@@ -150,7 +124,11 @@ const HeroSection = ({ onCreateResume, onUploadResume }) => {
           px: 4
         }}
       >
-        <motion.div variants={itemVariants}>
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+        >
           <Typography
             variant="h1"
             component="h1"
@@ -165,7 +143,11 @@ const HeroSection = ({ onCreateResume, onUploadResume }) => {
           </Typography>
         </motion.div>
 
-        <motion.div variants={itemVariants}>
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+        >
           <Typography
             variant="h5"
             component="p"
@@ -183,7 +165,9 @@ const HeroSection = ({ onCreateResume, onUploadResume }) => {
         </motion.div>
 
         <motion.div
-          variants={itemVariants}
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.6 }}
           style={{
             display: 'flex',
             gap: '1.5rem',
@@ -191,7 +175,7 @@ const HeroSection = ({ onCreateResume, onUploadResume }) => {
             flexWrap: 'wrap'
           }}
         >
-          <motion.div variants={buttonVariants} whileHover="hover">
+          <motion.div whileHover={{ scale: 1.05 }}>
             <Button
               variant="contained"
               size="large"
@@ -216,7 +200,7 @@ const HeroSection = ({ onCreateResume, onUploadResume }) => {
             </Button>
           </motion.div>
 
-          <motion.div variants={buttonVariants} whileHover="hover">
+          <motion.div whileHover={{ scale: 1.05 }}>
             <Button
               variant="outlined"
               size="large"

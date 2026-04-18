@@ -3,14 +3,6 @@ import { Box, Typography, LinearProgress, Avatar } from '@mui/material';
 import { motion } from 'framer-motion';
 
 const ResumeCard = ({ resume }) => {
-  const cardVariants = {
-    hidden: { opacity: 0, x: -30 },
-    visible: {
-      opacity: 1,
-      x: 0,
-      transition: { duration: 0.6 }
-    }
-  };
 
   // Generate color based on email
   const getAvatarColor = (email) => {
@@ -38,10 +30,10 @@ const ResumeCard = ({ resume }) => {
 
   return (
     <motion.div
-      variants={cardVariants}
-      whileHover="hover"
-      initial="hidden"
-      animate="visible"
+      whileHover={{ y: -4, transition: { duration: 0.2 } }}
+      initial={{ opacity: 0, x: -30 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.6 }}
     >
       <Box
         sx={{

@@ -129,18 +129,6 @@ const ResumeUploader = ({ onBack }) => {
     }
   };
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { duration: 0.6, staggerChildren: 0.1 }
-    }
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
-  };
 
   return (
     <>
@@ -156,9 +144,9 @@ const ResumeUploader = ({ onBack }) => {
       </AppBar>
 
       <Box sx={{ backgroundColor: 'white', py: 6, px: { xs: 3, md: 6 }, minHeight: '100vh' }}>
-        <motion.div initial="hidden" animate="visible" variants={containerVariants}>
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6 }}>
           {!result ? (
-            <motion.div variants={itemVariants}>
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
               <Box sx={{ maxWidth: 600, mx: 'auto' }}>
                 <Typography variant="h3" sx={{ fontWeight: 'bold', mb: 4, textAlign: 'center' }}>
                   Upload Your Resume
@@ -219,7 +207,7 @@ const ResumeUploader = ({ onBack }) => {
               </Box>
             </motion.div>
           ) : (
-            <motion.div variants={itemVariants}>
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
               <Box sx={{ maxWidth: 900, mx: 'auto' }}>
                 <Typography variant="h3" sx={{ fontWeight: 'bold', mb: 4 }}>
                   Resume Analysis

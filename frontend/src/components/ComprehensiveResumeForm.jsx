@@ -52,7 +52,22 @@ const ComprehensiveResumeForm = ({ onBack }) => {
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const [formData, setFormData] = useState({
-    personalInfo: { first_name: '', last_name: '', full_name: '', email: '', phone_number: '', address: '', city: '', state: '', country: '', postal_code: '', linkedin_url: '', github_url: '', portfolio_url: '', professional_summary: '' },
+    personalInfo: {
+      first_name: '',
+      last_name: '',
+      full_name: '',
+      email: '',
+      phone_number: '',
+      address: '',
+      city: '',
+      state: '',
+      country: '',
+      postal_code: '',
+      linkedin_url: '',
+      github_url: '',
+      portfolio_url: '',
+      professional_summary: ''
+    },
     education: [],
     experience: [],
     skills: [],

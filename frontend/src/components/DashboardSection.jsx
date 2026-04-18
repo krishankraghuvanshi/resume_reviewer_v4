@@ -34,25 +34,6 @@ const DashboardSection = () => {
     fetchResumes();
   }, []);
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        duration: 0.6,
-        staggerChildren: 0.1
-      }
-    }
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 30 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.5 }
-    }
-  };
 
   return (
     <Box
@@ -64,12 +45,17 @@ const DashboardSection = () => {
       }}
     >
       <motion.div
-        initial="hidden"
-        whileInView="visible"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
         viewport={{ once: true, amount: 0.2 }}
-        variants={containerVariants}
+        transition={{ duration: 0.6 }}
       >
-        <motion.div variants={itemVariants}>
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+        >
           <Typography
             variant="h2"
             component="h2"
@@ -98,7 +84,11 @@ const DashboardSection = () => {
           ) : resumes.length > 0 ? (
             resumes.map((resume, index) => (
               <Box key={resume.resume_id || index} sx={{ mb: 2 }}>
-                <motion.div variants={itemVariants}>
+                <motion.div
+                  initial={{ opacity: 0, x: -30 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.6, delay: index * 0.1 }}
+                >
                   <ResumeCard resume={resume} />
                 </motion.div>
               </Box>

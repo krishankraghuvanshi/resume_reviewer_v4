@@ -15,25 +15,6 @@ const WhyResumeSection = () => {
     'Education and certifications'
   ];
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        duration: 0.6,
-        staggerChildren: 0.1
-      }
-    }
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.5 }
-    }
-  };
 
   return (
     <Box
@@ -45,12 +26,17 @@ const WhyResumeSection = () => {
       }}
     >
       <motion.div
-        initial="hidden"
-        whileInView="visible"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
         viewport={{ once: true, amount: 0.2 }}
-        variants={containerVariants}
+        transition={{ duration: 0.6 }}
       >
-        <motion.div variants={itemVariants}>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+        >
           <Typography
             variant="h2"
             component="h2"
@@ -65,7 +51,12 @@ const WhyResumeSection = () => {
           </Typography>
         </motion.div>
 
-        <motion.div variants={itemVariants}>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+        >
           <Typography
             variant="body1"
             component="p"
@@ -89,11 +80,11 @@ const WhyResumeSection = () => {
           {checklistItems.map((item, index) => (
             <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
               <motion.div
-                variants={itemVariants}
-                whileHover={{
-                  y: -4,
-                  transition: { duration: 0.2 }
-                }}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.1 + (index * 0.05) }}
+                whileHover={{ y: -4, transition: { duration: 0.2 } }}
               >
                 <Card
                   sx={{
