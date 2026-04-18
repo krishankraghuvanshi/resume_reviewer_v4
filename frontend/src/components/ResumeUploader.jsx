@@ -34,7 +34,8 @@ import {
   Build as BuildIcon,
   WorkOutline as WorkIcon,
   EventNote as ProjectsIcon,
-  Code as CodeIcon
+  Code as CodeIcon,
+  PictureAsPdf as PictureAsPdfIcon
 } from '@mui/icons-material';
 import { motion } from 'framer-motion';
 import { resumeAPI } from '../services/api';
@@ -48,6 +49,7 @@ const ResumeUploader = ({ onBack }) => {
   const [enhancing, setEnhancing] = useState(false);
   const [latexCode, setLatexCode] = useState('');
   const [generatingLatex, setGeneratingLatex] = useState(false);
+  const [generatingPdf, setGeneratingPdf] = useState(false);
   const [copySuccess, setCopySuccess] = useState('');
 
   const handleFileChange = (event) => {
@@ -108,6 +110,25 @@ const ResumeUploader = ({ onBack }) => {
 
   const handleCloseSnackbar = () => {
     setCopySuccess('');
+  };
+
+  const handleDownloadPdf = async (parsedResume, filenamePrefix = 'resume') => {
+    setGeneratingPdf(true);
+    try {
+      const pdfBlob = await resumeAPI.generatePdf(parsedResume);
+      const url = window.URL.createObjectURL(pdfBlob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${filenamePrefix}_${Date.now()}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      setError(err.message || 'Failed to generate PDF');
+    } finally {
+      setGeneratingPdf(false);
+    }
   };
 
   const handleEnhanceResume = async () => {
@@ -465,15 +486,26 @@ const ResumeUploader = ({ onBack }) => {
                     Generate LaTeX (Original)
                   </Button>
                   {result.enhanced_resume && (
-                    <Button
-                      variant="contained"
-                      startIcon={<CodeIcon />}
-                      onClick={() => handleGenerateLatex(result.enhanced_resume)}
-                      disabled={generatingLatex}
-                      sx={{ backgroundColor: '#1976d2', color: 'white' }}
-                    >
-                      Generate LaTeX (Enhanced)
-                    </Button>
+                    <>
+                      <Button
+                        variant="contained"
+                        startIcon={<CodeIcon />}
+                        onClick={() => handleGenerateLatex(result.enhanced_resume)}
+                        disabled={generatingLatex}
+                        sx={{ backgroundColor: '#1976d2', color: 'white' }}
+                      >
+                        Generate LaTeX (Enhanced)
+                      </Button>
+                      <Button
+                        variant="contained"
+                        startIcon={<PictureAsPdfIcon />}
+                        onClick={() => handleDownloadPdf(result.enhanced_resume, 'enhanced_resume')}
+                        disabled={generatingPdf}
+                        sx={{ backgroundColor: '#7b1fa2', color: 'white' }}
+                      >
+                        {generatingPdf ? 'Generating PDF...' : 'Download PDF (Enhanced)'}
+                      </Button>
+                    </>
                   )}
                   <Button
                     variant="outlined"

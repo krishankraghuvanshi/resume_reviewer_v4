@@ -10,6 +10,7 @@ const { generateAvatar } = require("../services/avatar.service");
 const { archiveResume } = require("../services/storage.service");
 const { generateLatexResume } = require("../services/latexGenerator.service");
 const { enhanceResumeWithAI } = require("../services/resumeEnhancer.service");
+const latexCompiler = require("../services/latexCompiler.service");
 
 const { badRequest } = require("../utils/httpErrors");
 const { sha256 } = require("../utils/hash");
@@ -338,4 +339,41 @@ async function enhanceResume(req, res, next) {
   }
 }
 
-module.exports = { uploadResume, generateLatex, downloadLatex, enhanceResume };
+/**
+ * Generate PDF from LaTeX resume
+ * POST /api/resume/generate-pdf
+ * Body: { parsed_resume: {...} }
+ */
+async function generatePdf(req, res, next) {
+  try {
+    const { parsed_resume } = req.body;
+    
+    if (!parsed_resume || typeof parsed_resume !== 'object') {
+      throw badRequest("Missing or invalid 'parsed_resume' in request body");
+    }
+    
+    // Generate LaTeX code
+    const latexCode = generateLatexResume(parsed_resume);
+    
+    // Compile LaTeX to PDF
+    const pdfBuffer = await latexCompiler.compileLatexToPdf(latexCode);
+    
+    // Return as downloadable PDF
+    const fileName = `resume_${Date.now()}.pdf`;
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
+    res.setHeader('Content-Length', pdfBuffer.length);
+    
+    return res.send(pdfBuffer);
+  } catch (err) {
+    return next(err);
+  }
+}
+
+module.exports = { 
+  uploadResume, 
+  generateLatex, 
+  downloadLatex, 
+  generatePdf, 
+  enhanceResume 
+};

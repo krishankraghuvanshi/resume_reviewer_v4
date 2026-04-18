@@ -2,6 +2,9 @@ FROM node:18-alpine
 
 WORKDIR /app
 
+# Install Docker CLI needed to exec through latex container to generate pdf
+RUN apk add --no-cache docker
+
 # Copy package files
 COPY package*.json ./
 

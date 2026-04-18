@@ -55,6 +55,20 @@ export const resumeAPI = {
     }
   },
 
+  // Generate PDF from LaTeX
+  generatePdf: async (parsedResume) => {
+    try {
+      const response = await apiClient.post(
+        '/api/resume/generate-pdf',
+        { parsed_resume: parsedResume },
+        { responseType: 'blob' }
+      );
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || 'Failed to generate PDF');
+    }
+  },
+
   // Enhance resume with AI
   enhanceResume: async (parsedResume) => {
     try {

@@ -1,5 +1,5 @@
 const express = require("express");
-const { uploadResume, generateLatex, downloadLatex, enhanceResume } = require("../controllers/resume.controller");
+const { uploadResume, generateLatex, downloadLatex, generatePdf, enhanceResume } = require("../controllers/resume.controller");
 const { createUploadMiddleware, multerErrorAdapter } = require("../middlewares/upload.middleware");
 
 function resumeRoutes() {
@@ -13,6 +13,9 @@ function resumeRoutes() {
   
   // Download LaTeX as .tex file
   router.post("/download-latex", express.json(), downloadLatex);
+  
+  // Generate PDF from LaTeX
+  router.post("/generate-pdf", express.json(), generatePdf);
   
   // Enhance resume with AI
   router.post("/enhance", express.json(), enhanceResume);
