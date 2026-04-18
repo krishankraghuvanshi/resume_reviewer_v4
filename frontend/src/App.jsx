@@ -5,6 +5,7 @@ import WhyResumeSection from './components/WhyResumeSection';
 import DashboardSection from './components/DashboardSection';
 import ResumeUploader from './components/ResumeUploader';
 import ComprehensiveResumeForm from './components/ComprehensiveResumeForm';
+import Footer from './components/Footer';
 
 function App() {
   const [view, setView] = useState('home'); // 'home', 'upload', 'form'
@@ -45,6 +46,7 @@ function App() {
       />
       <WhyResumeSection />
       <DashboardSection />
+      <Footer />
     </Box>
   );
 }
