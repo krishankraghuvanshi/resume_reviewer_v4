@@ -175,7 +175,10 @@ const HeroSection = ({ onCreateResume, onUploadResume }) => {
             flexWrap: 'wrap'
           }}
         >
-          <motion.div whileHover={{ scale: 1.05 }}>
+          <motion.div 
+            whileHover={{ opacity: 0.8 }}
+            transition={{ duration: 0.2 }}
+          >
             <Button
               variant="contained"
               size="large"
@@ -200,25 +203,27 @@ const HeroSection = ({ onCreateResume, onUploadResume }) => {
             </Button>
           </motion.div>
 
-          <motion.div whileHover={{ scale: 1.05 }}>
+          <motion.div 
+            whileHover={{ opacity: 0.8 }}
+            transition={{ duration: 0.2 }}
+          >
             <Button
-              variant="outlined"
+              variant="contained"
               size="large"
               startIcon={<UploadIcon />}
               onClick={onUploadResume}
               sx={{
-                borderColor: 'white',
-                color: 'white',
+                backgroundColor: 'white',
+                color: 'black',
                 px: 4,
                 py: 2,
                 fontSize: '1.1rem',
                 fontWeight: '600',
                 textTransform: 'none',
                 borderRadius: 2,
-                borderWidth: 2,
                 '&:hover': {
-                  borderColor: 'white',
-                  backgroundColor: 'rgba(255,255,255,0.1)'
+                  backgroundColor: 'white',
+                  opacity: 0.9
                 }
               }}
             >
