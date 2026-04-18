@@ -1,6 +1,23 @@
 const db = require("../db");
 
 /**
+ * Mask email for privacy protection
+ * Format: firstChar + *** + lastCharBefore@ + @domain
+ */
+function maskEmail(email) {
+    if (!email) return 'Unknown';
+    
+    const atIndex = email.indexOf('@');
+    if (atIndex === -1) return email;
+    
+    const firstChar = email[0];
+    const lastChar = email[atIndex - 1];
+    const domain = email.substring(atIndex);
+    
+    return `${firstChar}***${lastChar}${domain}`;
+}
+
+/**
  * GET /api/resumes
  * Retrieve stored resumes with sorting, pagination, and filtering.
  */
@@ -47,7 +64,7 @@ async function getResumes(req, res, next) {
             const pd = row.parsed_data || {};
             return {
                 resume_id: row.resume_id,
-                email: row.email,
+                email: maskEmail(row.email),
                 name: pd.personal_info?.name || "Unknown",
                 avatar_url: row.avatar_url,
                 ats_score: row.ats_score,

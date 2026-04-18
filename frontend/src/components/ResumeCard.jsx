@@ -26,7 +26,7 @@ const ResumeCard = ({ resume }) => {
   const name = resume.name || 'Unknown Resume';
   const score = resume.ats_score || 0;
   const initials = getInitials(name);
-  const avatarColor = resume.avatar_url ? undefined : getAvatarColor(email);
+  const avatarColor = resume.avatar_url ? undefined : getAvatarColor(resume.email || 'Unknown');
 
   return (
     <motion.div
