@@ -42,8 +42,15 @@ const steps = [
 ];
 
 const ComprehensiveResumeForm = ({ onBack }) => {
-  const [activeStep, setActiveStep] = useState(0);
+  const [activeStep, setActiveStep] = useState(() => {
+    const savedStep = localStorage.getItem('resumeActiveStep');
+    return savedStep ? parseInt(savedStep, 10) : 0;
+  });
   const [loading, setLoading] = useState(false);
+
+  React.useEffect(() => {
+    localStorage.setItem('resumeActiveStep', activeStep.toString());
+  }, [activeStep]);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [latexOutput, setLatexOutput] = useState('');
@@ -51,18 +58,14 @@ const ComprehensiveResumeForm = ({ onBack }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
-  const [formData, setFormData] = useState({
+  const initialFormState = {
     personalInfo: {
       first_name: '',
       last_name: '',
       full_name: '',
       email: '',
       phone_number: '',
-      address: '',
-      city: '',
-      state: '',
-      country: '',
-      postal_code: '',
+      location: '',
       linkedin_url: '',
       github_url: '',
       portfolio_url: '',
@@ -79,7 +82,29 @@ const ComprehensiveResumeForm = ({ onBack }) => {
     volunteer_experience: [],
     publications: [],
     extracurricular_activities: []
+  };
+
+  const [formData, setFormData] = useState(() => {
+    try {
+      const saved = localStorage.getItem('resumeFormData');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {
+      console.error('Failed to parse cached form data', e);
+    }
+    return initialFormState;
   });
+
+  React.useEffect(() => {
+    localStorage.setItem('resumeFormData', JSON.stringify(formData));
+  }, [formData]);
+
+  const handleClearForm = () => {
+    localStorage.removeItem('resumeFormData');
+    localStorage.removeItem('resumeActiveStep');
+    setFormData(initialFormState);
+    setActiveStep(0);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   const handlePersonalInfoChange = (field, value) => {
     setFormData(prev => ({ ...prev, personalInfo: { ...prev.personalInfo, [field]: value } }));
@@ -102,7 +127,7 @@ const ComprehensiveResumeForm = ({ onBack }) => {
 
   const educationTemplate = { institution_name: '', degree: '', field_of_study: '', education_location: '', start_date: '', end_date: '', grade: '', description: '' };
   const experienceTemplate = { company_name: '', job_title: '', employment_type: '', location: '', start_date: '', end_date: '', currently_working: false, job_description: '', responsibilities: '', achievements: '' };
-  const skillTemplate = { skill_name: '', skill_level: '', skill_category: '' };
+  const skillTemplate = { skill_name: '' };
   const projectTemplate = { project_title: '', project_description: '', technologies_used: '', project_link: '', github_repository: '', start_date: '', end_date: '' };
   const certificationTemplate = { certification_name: '', issuing_organization: '', issue_date: '', expiration_date: '', credential_id: '', credential_url: '' };
   const achievementTemplate = { award_title: '', issuer: '', date: '', description: '' };
@@ -133,7 +158,7 @@ const ComprehensiveResumeForm = ({ onBack }) => {
           name: formData.personalInfo.full_name || `${formData.personalInfo.first_name} ${formData.personalInfo.last_name}`.trim(),
           email: formData.personalInfo.email,
           phone: formData.personalInfo.phone_number,
-          location: [formData.personalInfo.city, formData.personalInfo.state, formData.personalInfo.country].filter(Boolean).join(', '),
+          location: formData.personalInfo.location,
           linkedin: formData.personalInfo.linkedin_url,
           github: formData.personalInfo.github_url,
           portfolio: formData.personalInfo.portfolio_url,
@@ -157,8 +182,8 @@ const ComprehensiveResumeForm = ({ onBack }) => {
           description: [exp.job_description, exp.responsibilities, exp.achievements].filter(Boolean)
         })),
         skills: formData.skills.reduce((acc, skill) => {
-          if (!acc[skill.skill_category]) acc[skill.skill_category] = [];
-          acc[skill.skill_category].push(`${skill.skill_name} (${skill.skill_level})`);
+          if (!acc['Technical']) acc['Technical'] = [];
+          acc['Technical'].push(skill.skill_name);
           return acc;
         }, {}),
         projects: formData.projects.map(proj => ({
@@ -238,16 +263,7 @@ const ComprehensiveResumeForm = ({ onBack }) => {
                 <TextField fullWidth label="Phone Number" value={formData.personalInfo.phone_number} onChange={(e) => handlePersonalInfoChange('phone_number', e.target.value)} />
               </Grid>
               <Grid item xs={12}>
-                <TextField fullWidth label="Address" value={formData.personalInfo.address} onChange={(e) => handlePersonalInfoChange('address', e.target.value)} />
-              </Grid>
-              <Grid item xs={12} sm={4}>
-                <TextField fullWidth label="City" value={formData.personalInfo.city} onChange={(e) => handlePersonalInfoChange('city', e.target.value)} />
-              </Grid>
-              <Grid item xs={12} sm={4}>
-                <TextField fullWidth label="State" value={formData.personalInfo.state} onChange={(e) => handlePersonalInfoChange('state', e.target.value)} />
-              </Grid>
-              <Grid item xs={12} sm={4}>
-                <TextField fullWidth label="Country" value={formData.personalInfo.country} onChange={(e) => handlePersonalInfoChange('country', e.target.value)} />
+                <TextField fullWidth label="Location (e.g. Bangalore, India)" value={formData.personalInfo.location} onChange={(e) => handlePersonalInfoChange('location', e.target.value)} />
               </Grid>
               <Grid item xs={12} sm={4}>
                 <TextField fullWidth label="LinkedIn URL" value={formData.personalInfo.linkedin_url} onChange={(e) => handlePersonalInfoChange('linkedin_url', e.target.value)} />
@@ -421,18 +437,8 @@ const ComprehensiveResumeForm = ({ onBack }) => {
                 {formData.skills.map((skill, index) => (
                   <motion.div key={skill.id} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, height: 0 }}>
                     <Grid container spacing={2} alignItems="center">
-                      <Grid item xs={12} sm={4}>
+                      <Grid item xs={12} sm={11}>
                         <TextField fullWidth label="Skill Name" value={skill.skill_name} onChange={(e) => updateItem('skills', index, 'skill_name', e.target.value)} />
-                      </Grid>
-                      <Grid item xs={12} sm={3}>
-                        <TextField select fullWidth label="Skill Level" value={skill.skill_level} onChange={(e) => updateItem('skills', index, 'skill_level', e.target.value)}>
-                          {SKILL_LEVELS.map(level => <MenuItem key={level} value={level}>{level}</MenuItem>)}
-                        </TextField>
-                      </Grid>
-                      <Grid item xs={12} sm={4}>
-                        <TextField select fullWidth label="Category" value={skill.skill_category} onChange={(e) => updateItem('skills', index, 'skill_category', e.target.value)}>
-                          {SKILL_CATEGORIES.map(cat => <MenuItem key={cat} value={cat}>{cat}</MenuItem>)}
-                        </TextField>
                       </Grid>
                       <Grid item xs={12} sm={1}>
                         <IconButton onClick={() => deleteItem('skills', index)} color="error"><DeleteIcon /></IconButton>
@@ -596,14 +602,28 @@ const ComprehensiveResumeForm = ({ onBack }) => {
 
         {/* Action Footer */}
         <Box sx={{ display: 'flex', justifyContent: 'space-between', p: 3, backgroundColor: '#f8fafc', borderTop: '1px solid #e2e8f0' }}>
-          <Button
-            color="inherit"
-            disabled={activeStep === 0}
-            onClick={handleBackStep}
-            sx={{ fontWeight: 600, px: 4, py: 1.5, borderRadius: 2 }}
-          >
-            Back
-          </Button>
+          <Box sx={{ display: 'flex', gap: 2 }}>
+            <Button
+              color="inherit"
+              disabled={activeStep === 0}
+              onClick={handleBackStep}
+              sx={{ fontWeight: 600, px: 4, py: 1.5, borderRadius: 2 }}
+            >
+              Back
+            </Button>
+            <Button
+              color="error"
+              variant="outlined"
+              onClick={() => {
+                if (window.confirm('Are you sure you want to clear the entire form? This cannot be undone.')) {
+                  handleClearForm();
+                }
+              }}
+              sx={{ fontWeight: 600, px: { xs: 2, sm: 3 }, py: 1.5, borderRadius: 2 }}
+            >
+              Clear
+            </Button>
+          </Box>
           
           {activeStep === steps.length - 1 ? (
             <Button

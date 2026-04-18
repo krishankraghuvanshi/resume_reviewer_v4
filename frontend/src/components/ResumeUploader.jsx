@@ -42,7 +42,6 @@ import { resumeAPI } from '../services/api';
 
 const ResumeUploader = ({ onBack }) => {
   const [file, setFile] = useState(null);
-  const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [result, setResult] = useState(null);
@@ -72,7 +71,7 @@ const ResumeUploader = ({ onBack }) => {
     setLoading(true);
     setError('');
     try {
-      const data = await resumeAPI.uploadResume(file, email);
+      const data = await resumeAPI.uploadResume(file, '');
       setResult(data);
     } catch (err) {
       setError(err.message || 'Failed to upload resume');
@@ -199,16 +198,6 @@ const ResumeUploader = ({ onBack }) => {
                     </Typography>
                   </Box>
                 </Card>
-
-                <TextField
-                  fullWidth
-                  type="email"
-                  label="Email (Optional)"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  variant="outlined"
-                  sx={{ mb: 3 }}
-                />
 
                 <Button
                   fullWidth

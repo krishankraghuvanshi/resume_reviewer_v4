@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box } from '@mui/material';
 import HeroSection from './components/HeroSection';
 import WhyResumeSection from './components/WhyResumeSection';
@@ -8,7 +8,13 @@ import ComprehensiveResumeForm from './components/ComprehensiveResumeForm';
 import Footer from './components/Footer';
 
 function App() {
-  const [view, setView] = useState('home'); // 'home', 'upload', 'form'
+  const [view, setView] = useState(() => {
+    return localStorage.getItem('appView') || 'home';
+  }); // 'home', 'upload', 'form'
+
+  useEffect(() => {
+    localStorage.setItem('appView', view);
+  }, [view]);
 
   const handleCreateResume = () => {
     setView('form'); // Go to comprehensive form
