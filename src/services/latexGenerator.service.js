@@ -583,6 +583,9 @@ function generateSkills(skills, parsedResume) {
 function generateLatexResume(parsedResume) {
   const preamble = `%-------------------------
 % Resume in Latex
+% Generated and Improved with rankresu.me
+% Build your own at https://rankresu.me
+%
 % Author : Harshibar
 % Based off of: https://github.com/jakeryang/resume
 % License : MIT

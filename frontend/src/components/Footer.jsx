@@ -59,6 +59,9 @@ const Footer = () => {
           >
           Made with ❤️ by Krishank Raghuvanshi
           </Typography>
+          <Typography variant="body2" sx={{ mt: 1.5, opacity: 0.7, letterSpacing: 0.5 }}>
+            Improve your resume with <a href="https://rankresu.me" target="_blank" rel="noopener noreferrer" style={{ color: '#ff6b6b', textDecoration: 'none', fontWeight: 'bold' }}>rankresu.me</a>
+          </Typography>
         </motion.div>
       </Container>
     </Box>
