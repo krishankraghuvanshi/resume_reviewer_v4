@@ -139,7 +139,15 @@ const HeroSection = ({ onCreateResume, onUploadResume }) => {
               lineHeight: 1.2
             }}
           >
-            Build Resumes That Get Interviews
+            Build Resumes That{' '}
+            <Box component="span" sx={{
+              background: 'linear-gradient(to right, #6366f1, #ec4899)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              display: 'inline-block'
+            }}>
+              Get Interviews
+            </Box>
           </Typography>
         </motion.div>
 
@@ -175,61 +183,53 @@ const HeroSection = ({ onCreateResume, onUploadResume }) => {
             flexWrap: 'wrap'
           }}
         >
-          <motion.div 
-            whileHover={{ opacity: 0.8 }}
-            transition={{ duration: 0.2 }}
-          >
-            <Button
-              variant="contained"
-              size="large"
-              startIcon={<AddIcon />}
-              onClick={onCreateResume}
-              sx={{
-                backgroundColor: 'white',
-                color: 'black',
-                px: 4,
-                py: 2,
-                fontSize: '1.1rem',
-                fontWeight: '600',
-                textTransform: 'none',
-                borderRadius: 2,
-                '&:hover': {
-                  backgroundColor: 'white',
-                  opacity: 0.9
-                }
-              }}
+            <motion.div 
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              transition={{ duration: 0.2 }}
             >
-              Create from Scratch
-            </Button>
-          </motion.div>
+              <Button
+                variant="contained"
+                color="primary"
+                size="large"
+                startIcon={<AddIcon />}
+                onClick={onCreateResume}
+                sx={{
+                  px: 4,
+                  py: 1.5,
+                  fontSize: '1.1rem',
+                  borderRadius: 2
+                }}
+              >
+                Create from Scratch
+              </Button>
+            </motion.div>
 
-          <motion.div 
-            whileHover={{ opacity: 0.8 }}
-            transition={{ duration: 0.2 }}
-          >
-            <Button
-              variant="contained"
-              size="large"
-              startIcon={<UploadIcon />}
-              onClick={onUploadResume}
-              sx={{
-                backgroundColor: 'white',
-                color: 'black',
-                px: 4,
-                py: 2,
-                fontSize: '1.1rem',
-                fontWeight: '600',
-                textTransform: 'none',
-                borderRadius: 2,
-                '&:hover': {
-                  backgroundColor: 'white',
-                  opacity: 0.9
-                }
-              }}
+            <motion.div 
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              transition={{ duration: 0.2 }}
             >
-              Upload Existing Resume
-            </Button>
-          </motion.div>
+              <Button
+                variant="outlined"
+                color="secondary"
+                size="large"
+                startIcon={<UploadIcon />}
+                onClick={onUploadResume}
+                sx={{
+                  px: 4,
+                  py: 1.5,
+                  fontSize: '1.1rem',
+                  borderRadius: 2,
+                  borderWidth: '2px',
+                  '&:hover': {
+                    borderWidth: '2px',
+                  }
+                }}
+              >
+                Upload Existing Resume
+              </Button>
+            </motion.div>
         </motion.div>
       </motion.div>
     </Box>

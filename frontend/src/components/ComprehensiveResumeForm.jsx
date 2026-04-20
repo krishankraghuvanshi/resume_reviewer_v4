@@ -219,7 +219,7 @@ const ComprehensiveResumeForm = ({ onBack }) => {
       };
 
       const response = await resumeAPI.generateLatex(resumeData);
-      setLatexOutput(response.latex);
+      setLatexOutput(response.latex_code || response.latex);
       setSuccess('LaTeX generated successfully! Scroll down to view/download.');
     } catch (err) {
       setError(err.message || 'Failed to generate LaTeX');
@@ -544,46 +544,43 @@ const ComprehensiveResumeForm = ({ onBack }) => {
   return (
     <Box sx={{
       minHeight: '100vh',
-      backgroundColor: '#f8fafc',
-      color: '#0f172a',
       py: { xs: 4, md: 8 },
       px: { xs: 2, md: 4 },
-      '& .MuiTextField-root .MuiOutlinedInput-root': {
-        transition: 'all 0.2s',
-        backgroundColor: '#fff',
-        borderRadius: 2,
-        '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#94a3b8' },
-        '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#0f172a', borderWidth: '2px' }
-      },
-      '& .MuiInputLabel-root.Mui-focused': { color: '#0f172a' }
+      position: 'relative',
+      overflow: 'hidden'
     }}>
       
-      {onBack && (
-        <Box sx={{ maxWidth: '900px', mx: 'auto', mb: 3 }}>
-          <Button startIcon={<ArrowBackIcon />} onClick={onBack} sx={{ color: '#475569', '&:hover': { backgroundColor: '#f1f5f9' }, textTransform: 'none', fontWeight: 600 }}>
-            Back to Dashboard
-          </Button>
-        </Box>
-      )}
+      {/* Background Orbs for Glassmorphism depth */}
+      <Box sx={{ position: 'absolute', top: '-10%', left: '-10%', width: '40%', height: '40%', background: 'radial-gradient(circle, rgba(99,102,241,0.15) 0%, transparent 70%)', zIndex: 0 }} />
+      <Box sx={{ position: 'absolute', bottom: '-10%', right: '-10%', width: '40%', height: '40%', background: 'radial-gradient(circle, rgba(236,72,153,0.1) 0%, transparent 70%)', zIndex: 0 }} />
 
-      {error && <Alert severity="error" sx={{ maxWidth: '900px', mx: 'auto', mb: 2 }}>{error}</Alert>}
-      {success && <Alert severity="success" sx={{ maxWidth: '900px', mx: 'auto', mb: 2 }}>{success}</Alert>}
+      <Box sx={{ position: 'relative', zIndex: 1 }}>
+        {onBack && (
+          <Box sx={{ maxWidth: '900px', mx: 'auto', mb: 3 }}>
+            <Button startIcon={<ArrowBackIcon />} onClick={onBack} sx={{ color: 'text.secondary', '&:hover': { backgroundColor: 'rgba(255,255,255,0.05)' }, textTransform: 'none', fontWeight: 600 }}>
+              Back to Dashboard
+            </Button>
+          </Box>
+        )}
 
-      <Card sx={{ maxWidth: '900px', mx: 'auto', borderRadius: 4, boxShadow: '0 10px 40px -10px rgba(0,0,0,0.1)', overflow: 'hidden', backgroundColor: '#fff' }}>
-        
-        {/* Stepper Header */}
-        <Box sx={{ backgroundColor: '#fff', p: 4, borderBottom: '1px solid #e2e8f0' }}>
-          <Typography variant="h4" sx={{ fontWeight: 800, textAlign: 'center', mb: 4, color: '#0f172a' }}>
-            Resume Wizard
-          </Typography>
-          <Stepper activeStep={activeStep} alternativeLabel={!isMobile} orientation={isMobile ? 'vertical' : 'horizontal'}>
-            {steps.map((label) => (
-              <Step key={label}>
-                <StepLabel>{label}</StepLabel>
-              </Step>
-            ))}
-          </Stepper>
-        </Box>
+        {error && <Alert severity="error" sx={{ maxWidth: '900px', mx: 'auto', mb: 2 }}>{error}</Alert>}
+        {success && <Alert severity="success" sx={{ maxWidth: '900px', mx: 'auto', mb: 2 }}>{success}</Alert>}
+
+        <Card sx={{ maxWidth: '900px', mx: 'auto', borderRadius: 4, overflow: 'hidden' }}>
+          
+          {/* Stepper Header */}
+          <Box sx={{ p: 4, borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+            <Typography variant="h4" sx={{ fontWeight: 800, textAlign: 'center', mb: 4, color: 'text.primary' }}>
+              Resume Wizard
+            </Typography>
+            <Stepper activeStep={activeStep} alternativeLabel={!isMobile} orientation={isMobile ? 'vertical' : 'horizontal'}>
+              {steps.map((label) => (
+                <Step key={label}>
+                  <StepLabel>{label}</StepLabel>
+                </Step>
+              ))}
+            </Stepper>
+          </Box>
 
         {/* Dynamic Step Content */}
         <Box sx={{ minHeight: '400px', position: 'relative' }}>
@@ -601,7 +598,7 @@ const ComprehensiveResumeForm = ({ onBack }) => {
         </Box>
 
         {/* Action Footer */}
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', p: 3, backgroundColor: '#f8fafc', borderTop: '1px solid #e2e8f0' }}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', p: 3, backgroundColor: 'rgba(15, 23, 42, 0.3)', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
           <Box sx={{ display: 'flex', gap: 2 }}>
             <Button
               color="inherit"
@@ -628,18 +625,20 @@ const ComprehensiveResumeForm = ({ onBack }) => {
           {activeStep === steps.length - 1 ? (
             <Button
               variant="contained"
+              color="primary"
               onClick={handleGenerateLatex}
               disabled={loading}
               startIcon={loading ? <CircularProgress size={20} color="inherit" /> : <DescriptionIcon />}
-              sx={{ backgroundColor: '#c73835', '&:hover': { backgroundColor: '#a02d2a' }, fontWeight: 700, px: 4, py: 1.5, borderRadius: 2 }}
+              sx={{ fontWeight: 700, px: 4, py: 1.5, borderRadius: 2 }}
             >
               {loading ? 'Compiling...' : 'Generate Resume'}
             </Button>
           ) : (
             <Button
               variant="contained"
+              color="primary"
               onClick={handleNext}
-              sx={{ backgroundColor: '#0f172a', '&:hover': { backgroundColor: '#1e293b' }, fontWeight: 700, px: 6, py: 1.5, borderRadius: 2 }}
+              sx={{ fontWeight: 700, px: 6, py: 1.5, borderRadius: 2 }}
             >
               Next Step
             </Button>
@@ -669,6 +668,7 @@ const ComprehensiveResumeForm = ({ onBack }) => {
         </motion.div>
       )}
 
+      </Box>
     </Box>
   );
 };

@@ -152,18 +152,23 @@ const ResumeUploader = ({ onBack }) => {
 
   return (
     <>
-      <AppBar position="static" sx={{ backgroundColor: 'black' }}>
+      <AppBar position="static" sx={{ backgroundColor: 'transparent', boxShadow: 'none', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
         <Toolbar>
           <IconButton edge="start" color="inherit" onClick={onBack} sx={{ mr: 2 }}>
             <ArrowBackIcon />
           </IconButton>
-          <Typography variant="h6" sx={{ flexGrow: 1 }}>
+          <Typography variant="h6" sx={{ flexGrow: 1, color: 'text.primary', fontWeight: 'bold' }}>
             Upload & Review Resume
           </Typography>
         </Toolbar>
       </AppBar>
 
-      <Box sx={{ backgroundColor: 'white', py: 6, px: { xs: 3, md: 6 }, minHeight: '100vh' }}>
+      <Box sx={{ position: 'relative', py: 6, px: { xs: 3, md: 6 }, minHeight: '100vh', overflow: 'hidden' }}>
+        {/* Background Orbs for Glassmorphism depth */}
+        <Box sx={{ position: 'absolute', top: '-10%', left: '-10%', width: '40%', height: '40%', background: 'radial-gradient(circle, rgba(99,102,241,0.15) 0%, transparent 70%)', zIndex: 0 }} />
+        <Box sx={{ position: 'absolute', bottom: '-10%', right: '-10%', width: '40%', height: '40%', background: 'radial-gradient(circle, rgba(236,72,153,0.1) 0%, transparent 70%)', zIndex: 0 }} />
+        
+        <Box sx={{ position: 'relative', zIndex: 1 }}>
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6 }}>
           {!result ? (
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
@@ -178,9 +183,9 @@ const ResumeUploader = ({ onBack }) => {
                   </Alert>
                 )}
 
-                <Card sx={{ p: 4, mb: 4, border: '2px dashed #000' }}>
+                <Card sx={{ p: 4, mb: 4, border: '2px dashed rgba(255,255,255,0.3)', backgroundColor: 'rgba(15,23,42,0.5)' }}>
                   <Box sx={{ textAlign: 'center' }}>
-                    <CloudUploadIcon sx={{ fontSize: 60, mb: 2, color: 'rgba(0,0,0,0.3)' }} />
+                    <CloudUploadIcon sx={{ fontSize: 60, mb: 2, color: 'rgba(255,255,255,0.5)' }} />
                     <input
                       type="file"
                       accept="application/pdf"
@@ -189,11 +194,11 @@ const ResumeUploader = ({ onBack }) => {
                       id="file-input"
                     />
                     <label htmlFor="file-input" style={{ cursor: 'pointer', display: 'block' }}>
-                      <Typography variant="h6" sx={{ mb: 2, color: file ? 'green' : 'black' }}>
+                      <Typography variant="h6" sx={{ mb: 2, color: file ? '#4ade80' : 'text.primary' }}>
                         {file ? `✓ ${file.name}` : 'Click to upload PDF'}
                       </Typography>
                     </label>
-                    <Typography variant="body2" color="textSecondary">
+                    <Typography variant="body2" color="text.secondary">
                       Maximum file size: 2MB
                     </Typography>
                   </Box>
@@ -202,17 +207,13 @@ const ResumeUploader = ({ onBack }) => {
                 <Button
                   fullWidth
                   variant="contained"
+                  color="primary"
                   size="large"
                   onClick={handleUpload}
                   disabled={!file || loading}
-                  sx={{
-                    backgroundColor: 'black',
-                    color: 'white',
-                    py: 1.5,
-                    '&:hover': { backgroundColor: 'rgba(0,0,0,0.8)' }
-                  }}
+                  sx={{ py: 1.5 }}
                 >
-                  {loading ? <CircularProgress size={24} sx={{ color: 'white' }} /> : 'Upload & Review'}
+                  {loading ? <CircularProgress size={24} sx={{ color: 'inherit' }} /> : 'Upload & Review'}
                 </Button>
               </Box>
             </motion.div>
@@ -230,7 +231,7 @@ const ResumeUploader = ({ onBack }) => {
                 )}
 
                 {/* ATS Score */}
-                <Card sx={{ mb: 4, backgroundColor: '#f5f5f5' }}>
+                <Card sx={{ mb: 4, backgroundColor: 'rgba(30, 41, 59, 0.7)' }}>
                   <CardContent sx={{ p: 4 }}>
                     <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 3 }}>
                       ATS Score
@@ -320,7 +321,7 @@ const ResumeUploader = ({ onBack }) => {
                           Experience
                         </Typography>
                         {result.parsed_resume.experience.map((exp, idx) => (
-                          <Box key={idx} sx={{ mb: 2, p: 2, backgroundColor: '#f9f9f9', borderRadius: 1 }}>
+                          <Box key={idx} sx={{ mb: 2, p: 2, backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: 1 }}>
                             <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
                               {exp.title || exp.role}
                             </Typography>
@@ -343,7 +344,7 @@ const ResumeUploader = ({ onBack }) => {
                           Education
                         </Typography>
                         {result.parsed_resume.education.map((edu, idx) => (
-                          <Box key={idx} sx={{ mb: 2, p: 2, backgroundColor: '#f9f9f9', borderRadius: 1 }}>
+                          <Box key={idx} sx={{ mb: 2, p: 2, backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: 1 }}>
                             <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
                               {edu.degree}
                             </Typography>
@@ -359,7 +360,7 @@ const ResumeUploader = ({ onBack }) => {
 
                 {/* Suggestions */}
                 {result.suggestions && (
-                  <Card sx={{ mb: 4, backgroundColor: '#fff3cd' }}>
+                  <Card sx={{ mb: 4, backgroundColor: 'rgba(245, 158, 11, 0.1)', border: '1px solid rgba(245, 158, 11, 0.3)' }}>
                     <CardContent sx={{ p: 4 }}>
                       <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 3, display: 'flex', alignItems: 'center', gap: 1 }}>
                         <LightbulbIcon color="warning" /> Improvement Suggestions
@@ -438,7 +439,7 @@ const ResumeUploader = ({ onBack }) => {
 
                 {/* Enhanced Resume */}
                 {result.enhanced_resume && (
-                  <Card sx={{ mb: 4, backgroundColor: '#e8f5e9' }}>
+                  <Card sx={{ mb: 4, backgroundColor: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16, 185, 129, 0.3)' }}>
                     <CardContent sx={{ p: 4 }}>
                       <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 3 }}>
                         ✨ AI-Enhanced Resume
@@ -456,7 +457,7 @@ const ResumeUploader = ({ onBack }) => {
                           />
                         </Box>
                       )}
-                      <Typography variant="body2" component="pre" sx={{ whiteSpace: 'pre-wrap', fontFamily: 'monospace', fontSize: '0.85rem', maxHeight: 300, overflow: 'auto', backgroundColor: '#fff', p: 2, borderRadius: 1 }}>
+                      <Typography variant="body2" component="pre" sx={{ whiteSpace: 'pre-wrap', fontFamily: 'monospace', fontSize: '0.85rem', maxHeight: 300, overflow: 'auto', backgroundColor: 'rgba(0,0,0,0.3)', p: 2, borderRadius: 1 }}>
                         {JSON.stringify(result.enhanced_resume, null, 2)}
                       </Typography>
                     </CardContent>
@@ -467,10 +468,10 @@ const ResumeUploader = ({ onBack }) => {
                 <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', mb: 3 }}>
                   <Button
                     variant="contained"
+                    color="primary"
                     startIcon={<CodeIcon />}
                     onClick={() => handleGenerateLatex(result.parsed_resume)}
                     disabled={generatingLatex}
-                    sx={{ backgroundColor: 'black', color: 'white' }}
                   >
                     Generate LaTeX (Original)
                   </Button>
@@ -478,10 +479,10 @@ const ResumeUploader = ({ onBack }) => {
                     <>
                       <Button
                         variant="contained"
+                        color="secondary"
                         startIcon={<CodeIcon />}
                         onClick={() => handleGenerateLatex(result.enhanced_resume)}
                         disabled={generatingLatex}
-                        sx={{ backgroundColor: '#1976d2', color: 'white' }}
                       >
                         Generate LaTeX (Enhanced)
                       </Button>
@@ -501,7 +502,7 @@ const ResumeUploader = ({ onBack }) => {
                     startIcon={<AutoFixHighIcon />}
                     onClick={handleEnhanceResume}
                     disabled={enhancing}
-                    sx={{ borderColor: 'black', color: 'black' }}
+                    sx={{ color: 'text.primary', borderColor: 'rgba(255,255,255,0.3)' }}
                   >
                     {enhancing ? 'Enhancing...' : 'Enhance with AI'}
                   </Button>
@@ -512,7 +513,7 @@ const ResumeUploader = ({ onBack }) => {
                       setFile(null);
                       setLatexCode('');
                     }}
-                    sx={{ borderColor: 'black', color: 'black' }}
+                    sx={{ color: 'text.primary', borderColor: 'rgba(255,255,255,0.3)' }}
                   >
                     Upload Another
                   </Button>
@@ -520,7 +521,7 @@ const ResumeUploader = ({ onBack }) => {
 
                 {/* LaTeX Viewer */}
                 {latexCode && (
-                  <Card sx={{ mb: 4, backgroundColor: '#f5f5f5', border: '1px solid #ddd' }}>
+                  <Card sx={{ mb: 4, backgroundColor: 'rgba(15,23,42,0.5)', border: '1px solid rgba(255,255,255,0.1)' }}>
                     <CardContent sx={{ p: 4 }}>
                       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
                         <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
@@ -546,7 +547,7 @@ const ResumeUploader = ({ onBack }) => {
                           sx: { fontFamily: 'monospace', fontSize: '0.85rem' }
                         }}
                         variant="outlined"
-                        sx={{ backgroundColor: 'white' }}
+                        sx={{ backgroundColor: 'rgba(0,0,0,0.3)' }}
                       />
                     </CardContent>
                   </Card>
@@ -555,6 +556,8 @@ const ResumeUploader = ({ onBack }) => {
             </motion.div>
           )}
         </motion.div>
+        
+        </Box>
       </Box>
 
       <Snackbar

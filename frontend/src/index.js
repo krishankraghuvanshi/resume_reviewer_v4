@@ -6,24 +6,26 @@ import App from './App';
 
 const theme = createTheme({
   palette: {
-    mode: 'light',
+    mode: 'dark',
     primary: {
-      main: '#000000',
+      main: '#6366f1', // Electric Indigo
+      light: '#818cf8',
+      dark: '#4f46e5',
     },
     secondary: {
-      main: '#ffffff',
+      main: '#ec4899', // Pink accent
     },
     background: {
-      default: '#ffffff',
-      paper: '#ffffff',
+      default: '#0f172a', // Slate 900
+      paper: '#1e293b',   // Slate 800
     },
     text: {
-      primary: '#000000',
-      secondary: 'rgba(0, 0, 0, 0.6)',
+      primary: '#f8fafc',
+      secondary: '#94a3b8',
     },
   },
   typography: {
-    fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
+    fontFamily: '"Outfit", "Inter", "Roboto", "Helvetica", "Arial", sans-serif',
     h1: {
       fontWeight: 700,
     },
@@ -42,9 +44,13 @@ const theme = createTheme({
     h6: {
       fontWeight: 600,
     },
+    button: {
+      textTransform: 'none',
+      fontWeight: 600,
+    },
   },
   shape: {
-    borderRadius: 8,
+    borderRadius: 12, // More rounded, modern feel
   },
   components: {
     MuiButton: {
@@ -52,13 +58,60 @@ const theme = createTheme({
         root: {
           textTransform: 'none',
           fontWeight: 600,
+          borderRadius: 8,
+          padding: '10px 24px',
+        },
+        containedPrimary: {
+          backgroundImage: 'linear-gradient(to right, #6366f1, #8b5cf6)',
+          boxShadow: '0 4px 14px 0 rgba(99, 102, 241, 0.39)',
+          '&:hover': {
+            backgroundImage: 'linear-gradient(to right, #4f46e5, #7c3aed)',
+            boxShadow: '0 6px 20px rgba(99, 102, 241, 0.23)',
+          },
         },
       },
     },
     MuiCard: {
       styleOverrides: {
         root: {
-          boxShadow: 'none',
+          backgroundColor: 'rgba(30, 41, 59, 0.7)',
+          backdropFilter: 'blur(10px)',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+          boxShadow: '0 10px 40px -10px rgba(0,0,0,0.3)',
+        },
+      },
+    },
+    MuiTextField: {
+      styleOverrides: {
+        root: {
+          '& .MuiOutlinedInput-root': {
+            backgroundColor: 'rgba(15, 23, 42, 0.6)',
+            borderRadius: 8,
+            transition: 'all 0.2s ease-in-out',
+            fieldset: {
+              borderColor: 'rgba(255, 255, 255, 0.15)',
+            },
+            '&:hover fieldset': {
+              borderColor: 'rgba(255, 255, 255, 0.3)',
+            },
+            '&.Mui-focused fieldset': {
+              borderColor: '#6366f1',
+              borderWidth: '2px',
+            },
+          },
+        },
+      },
+    },
+    MuiStepIcon: {
+      styleOverrides: {
+        root: {
+          color: 'rgba(255, 255, 255, 0.2)',
+          '&.Mui-active': {
+            color: '#6366f1',
+          },
+          '&.Mui-completed': {
+            color: '#6366f1',
+          },
         },
       },
     },
