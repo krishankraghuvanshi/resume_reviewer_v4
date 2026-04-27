@@ -1,6 +1,7 @@
 # Resume Reviewer v4
 
 A full-stack application for reviewing resumes. It consists of a React frontend and a Node.js/Express backend using PostgreSQL, OpenAI API, and Apache Tika for document parsing.
+this project is deployed on https://www.rankresu.me/
 
 ## Prerequisites
 
